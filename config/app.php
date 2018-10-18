@@ -160,6 +160,9 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+//      you can replace Illuminate\Hashing\HashServiceProvider::class,
+//        \App\Providers\MD5HashServiceProvider::class,
+
         /*
          * Package Service Providers...
          */

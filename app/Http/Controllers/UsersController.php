@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+//use Illuminate\Contracts\Hashing;
 use Illuminate\Support\Facades\Validator;
 use App\user;
 
@@ -29,13 +30,10 @@ class UsersController extends Controller
 
             [
                 'name' => 'required|max:20',
-                'email' => 'unique:users|required|email|max:100',
+                'email' => 'unique:users|required|email|min:6|max:100',
                 'password' => 'required|max:16'
             ]
 
-//            [
-//                'required' => 'The :attribute field is required.'
-//            ]
         );
 
         if ($validator->fails()) {
@@ -46,7 +44,7 @@ class UsersController extends Controller
         User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->passoword),
+                'password' => Hash::make($request->password),
             ]
         );
 
