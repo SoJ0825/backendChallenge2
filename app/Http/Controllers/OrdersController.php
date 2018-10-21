@@ -18,9 +18,9 @@ class OrdersController extends Controller
             [
                 'shop' => 'exists:Shops,name',
                 'merchandises' => 'required|array',
-                'merchandises.*' => 'array',
-                'merchandises.*.name' => 'exists:Merchandises|string|max:30',
-                'merchandises.*.count' => 'integer',
+                'merchandises.*' => 'required|array',
+                'merchandises.*.name' => 'required|exists:Merchandises|string|max:30',
+                'merchandises.*.count' => 'required|integer',
             ]
         );
 
@@ -37,7 +37,7 @@ class OrdersController extends Controller
         if ($request->user()->order->count() > 0) {
             $order = $order_id = $request->user()->order;
             $order_id = $order->where('user_id', '=', $user_id)->last()->order_id + 1;
-            str_pad($order_id,5,"0", 0);
+            str_pad($order_id, 5, "0", 0);
         }
 
         foreach ($request->merchandises as $item) {
@@ -52,9 +52,10 @@ class OrdersController extends Controller
         }
         return response(['result' => 'true', 'response' => 'We get your order.']);
     }
+
     public function read(Request $request, $orderID)
     {
-        if(($merchandises = $request->user()->order->where('order_id', '=', $orderID))->count() > 0) {
+        if (($merchandises = $request->user()->order->where('order_id', '=', $orderID))->count() > 0) {
             $total_price = 0;
             $item_count = 0;
             $data = [];
@@ -72,6 +73,48 @@ class OrdersController extends Controller
             return response(['result' => 'true', 'response' => $data]);
         }
 
+        return response(['result' => 'false', 'response' => "Your order doesn't exist"]);
+    }
+
+    public function update(Request $request, $orderID)
+    {
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'merchandises' => 'required|array',
+                'merchandises.*' => 'required|array',
+                'merchandises.*.name' => 'required|exists:Merchandises|string|max:30',
+                'merchandises.*.count' => 'required|integer',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return $validator->errors()->first();
+        }
+
+        if (Order::all()->where('user_id', '=', 1)
+                ->where('order_id', '=', $orderID)->count() > 0) {
+
+            foreach ($request->merchandises as $item) {
+                $order = Order::all()->where('user_id', '=', 1)
+                    ->where('order_id', '=', $orderID)
+                    ->where('merchandise', '=', $item['name'])->first();
+                if (is_null($order)) {
+                    return response(['result' => 'false', 'response' => 'Some merchandise is not in order']);
+                }
+            }
+
+            foreach ($request->merchandises as $item) {
+                $order = Order::all()->where('user_id', '=', 1)
+                    ->where('order_id', '=', $orderID)
+                    ->where('merchandise', '=', $item['name'])->first();
+                $order->merchandise = $item['name'];
+                $order->count = $item['count'];
+                $order->save();
+            };
+            return response(['result' => 'true', 'response' => 'OK, We update your order.']);
+        }
         return response(['result' => 'false', 'response' => "Your order doesn't exist"]);
     }
 }

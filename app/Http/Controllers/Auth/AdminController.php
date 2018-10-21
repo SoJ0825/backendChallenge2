@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     //
-    public function index() {
-        return 'in AdminController index function';
+    public function index(Request $request) {
+        $user = $request->user();
+        return response(['result' => 'true', 'response' => $user]);
     }
+
+
 }

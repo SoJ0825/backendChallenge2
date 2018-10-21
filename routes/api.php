@@ -15,10 +15,12 @@ Route::middleware('login', 'updateAPItoken')->post('/login', 'Auth\LoginControll
 //admin登入方法
 Route::middleware('login', 'is_Admin', 'updateAPItoken')->prefix('admin')->group(function () {
     Route::post('/', 'Auth\AdminController@index');
+
 });
 
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/user/order', 'OrdersController@store');
     Route::post('/user/order/{orderID}', 'OrdersController@read');
+    Route::post('/user/order/{orderID}/update', 'OrdersController@update');
 });
