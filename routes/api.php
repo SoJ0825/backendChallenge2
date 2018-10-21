@@ -20,5 +20,5 @@ Route::middleware('login', 'is_Admin', 'updateAPItoken')->prefix('admin')->group
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/user/order', 'OrdersController@store');
-    Route::post('/user/order/{order}', 'OrderController@read');
+    Route::post('/user/order/{orderID}', 'OrdersController@read');
 });

@@ -12,7 +12,7 @@ class Order extends Model
     ];
 
     protected $hidden = [
-        'created_at', 'updated_at',
+        'serial_number', 'user_id', 'created_at', 'updated_at',
     ];
 
     public function user()

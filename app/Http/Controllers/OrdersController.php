@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\User;
 use App\Order;
 use App\Shop;
-use App\Merchandise;
+use function MongoDB\BSON\toJSON;
 
 class OrdersController extends Controller
 {
@@ -18,7 +17,7 @@ class OrdersController extends Controller
             $request->all(),
             [
                 'shop' => 'exists:Shops,name',
-                'merchandises' => 'array',
+                'merchandises' => 'required|array',
                 'merchandises.*' => 'array',
                 'merchandises.*.name' => 'exists:Merchandises|string|max:30',
                 'merchandises.*.count' => 'integer',
@@ -52,5 +51,27 @@ class OrdersController extends Controller
             ]);
         }
         return response(['result' => 'true', 'response' => 'We get your order.']);
+    }
+    public function read(Request $request, $orderID)
+    {
+        if(($merchandises = $request->user()->order->where('order_id', '=', $orderID))->count() > 0) {
+            $total_price = 0;
+            $item_count = 0;
+            $data = [];
+            foreach ($merchandises as $merchandise) {
+                $total_price = $merchandise['count'] * $merchandise['unit_price'];
+                $data[$item_count] =
+                    [
+                        'name' => $merchandise['merchandise'],
+                        'count' => $merchandise['count']
+                    ];
+                $item_count += 1;
+            }
+            $data['total_price'] = $total_price;
+//            $merchandises->put('tatal_price', $total_price);
+            return response(['result' => 'true', 'response' => $data]);
+        }
+
+        return response(['result' => 'false', 'response' => "Your order doesn't exist"]);
     }
 }
