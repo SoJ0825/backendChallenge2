@@ -92,12 +92,11 @@ class OrdersController extends Controller
         if ($validator->fails()) {
             return $validator->errors()->first();
         }
-
-        if (Order::all()->where('user_id', '=', 1)
+        if (Order::all()->where('user_id', '=', $request->user()->id)
                 ->where('order_id', '=', $orderID)->count() > 0) {
 
             foreach ($request->merchandises as $item) {
-                $order = Order::all()->where('user_id', '=', 1)
+                $order = Order::all()->where('user_id', '=',$request->user()->id)
                     ->where('order_id', '=', $orderID)
                     ->where('merchandise', '=', $item['name'])->first();
                 if (is_null($order)) {
@@ -106,7 +105,7 @@ class OrdersController extends Controller
             }
 
             foreach ($request->merchandises as $item) {
-                $order = Order::all()->where('user_id', '=', 1)
+                $order = Order::all()->where('user_id', '=', $request->user()->id)
                     ->where('order_id', '=', $orderID)
                     ->where('merchandise', '=', $item['name'])->first();
                 $order->merchandise = $item['name'];
