@@ -12,11 +12,4 @@ class LoginController extends Controller
         $user = $request->user();
         return response(['result' => 'true', 'response' => $user]);
     }
-
-    public function showAllOrder(Request $request)
-    {
-
-    }
-
-    
 }
