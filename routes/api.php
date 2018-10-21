@@ -25,7 +25,7 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::middleware('auth:api', 'is_Admin')->prefix('admin')->group(function (){
-    Route::middleware('is_Admin')->post('/orders', 'Auth\AdminController@showAllOrder');
+    Route::middleware('is_Admin')->post('/orders', 'Auth\AdminController@showAllOrders');
     Route::post('/merchandises', 'Auth\AdminController@showAllMerchandises');
-    Route::delete('/orders/delete', 'Auth\AdminController@clearAllOrder');
+    Route::delete('/orders/delete', 'Auth\AdminController@clearAllOrders');
 });

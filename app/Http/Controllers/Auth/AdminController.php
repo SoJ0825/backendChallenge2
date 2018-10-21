@@ -16,21 +16,24 @@ class AdminController extends Controller
     }
 
 
-    public function showAllOrder(Request $request)
+    public function showAllOrders()
     {
         $data = Order::all();
-        return $data;
+
+        return response(['reslut' => 'true', 'response' => $data]);
 
     }
 
-    public function clearAllOrder(Request $request)
+    public function clearAllOrders()
     {
-
+        Order::truncate();
+        return response(['result' => 'true', 'response' => 'Destroy all orders']);
     }
 
-    public function showAllMerchandise(Request $request)
+    public function showAllMerchandises()
     {
-
+        $data = Merchandise::all();
+        return response(['result' => 'true', 'response' => $data]);
     }
 
 }
