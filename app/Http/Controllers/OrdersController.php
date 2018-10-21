@@ -60,7 +60,7 @@ class OrdersController extends Controller
             $item_count = 0;
             $data = [];
             foreach ($merchandises as $merchandise) {
-                $total_price = $merchandise['count'] * $merchandise['unit_price'];
+                $total_price += $merchandise['count'] * $merchandise['unit_price'];
                 $data[$item_count] =
                     [
                         'name' => $merchandise['merchandise'],
